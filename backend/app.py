@@ -2,9 +2,12 @@ import os
 import csv
 from flask import Flask, request, jsonify
 from models import db, Pokemon
+from flask_cors import CORS 
+
 
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pokemons.db'
 db.init_app(app)
 
