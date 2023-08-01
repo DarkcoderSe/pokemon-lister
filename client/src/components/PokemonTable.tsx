@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button, Slider, Container, Card } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button, Slider, Container, Card, Typography, Box, Link, InputLabel, Input } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import { Pokemon, Filters } from '../interfaces';
 import { getPokemons } from '../services/pokemon';
-
 
 const PokemonTable: React.FC = () => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
@@ -69,53 +68,62 @@ const PokemonTable: React.FC = () => {
     <Container>
       <div>
         <Card variant="outlined">
-          <div>
-            <TextField
-              label="Search by name"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              variant="outlined"
-              margin="normal"
-              
-            />
-            <Button variant="contained" color="primary" onClick={() => setFilters({})} >
-              Clear Filters
-            </Button>
-          </div>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ m: 2 }}>
+              <InputLabel htmlFor="search">
+                Search
+              </InputLabel>
+              <TextField
+                label="Search by name"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                variant="outlined"
+                margin="normal"
+                fullWidth
+              />
+            </Box>
+            <Box sx={{ m: 2 }}>
+              <Typography variant="body1">
+                <Link href="#" onClick={() => setFilters({})}>
+                  Clear Filters
+                </Link>
+              </Typography>
+            </Box>
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ m: 2 }}>
+              <Typography variant="body1">Base Experience:</Typography>
+              <Slider
+                value={filters.base_experience || 0}
+                min={0}
+                max={500}
+                onChange={(event, value) => handleFilterChange('base_experience', value as number)}
+                valueLabelDisplay="auto"
+              />
+            </Box>
+            <Box sx={{ m: 2 }}>
+              <Typography variant="body1">Height:</Typography>
+              <Slider
+                value={filters.height || 0}
+                min={0}
+                max={300}
+                onChange={(event, value) => handleFilterChange('height', value as number)}
+                valueLabelDisplay="auto"
+              />
+            </Box>
+            <Box sx={{ m: 2 }}>
+              <Typography variant="body1">Weight:</Typography>
+              <Slider
+                value={filters.weight || 0}
+                min={0}
+                max={1000}
+                onChange={(event, value) => handleFilterChange('weight', value as number)}
+                valueLabelDisplay="auto"
+              />
+            </Box>
+          </Box>
         </Card>
-      <div >
-        
-        <div >
-          <span>Base Experience:</span>
-          <Slider
-            value={filters.base_experience || 0}
-            min={0}
-            max={500}
-            onChange={(event, value) => handleFilterChange('base_experience', value as number)}
-            valueLabelDisplay="auto"
-          />
-        </div>
-        <div>
-          <span>Height:</span>
-          <Slider
-            value={filters.height || 0}
-            min={0}
-            max={300}
-            onChange={(event, value) => handleFilterChange('height', value as number)}
-            valueLabelDisplay="auto"
-          />
-        </div>
-        <div>
-          <span>Weight:</span>
-          <Slider
-            value={filters.weight || 0}
-            min={0}
-            max={1000}
-            onChange={(event, value) => handleFilterChange('weight', value as number)}
-            valueLabelDisplay="auto"
-          />
-        </div>
-      </div>
+      
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -132,6 +140,7 @@ const PokemonTable: React.FC = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
         <div>
           <Pagination
               count={totalPages}
@@ -140,7 +149,7 @@ const PokemonTable: React.FC = () => {
               variant="outlined"
               shape="rounded"
           />
-          </div>
+        </div>
       </div>
     </Container>
     
