@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button, Slider } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
 
 
 interface Pokemon {
@@ -141,12 +142,14 @@ const PokemonTable: React.FC = () => {
         </Table>
       </TableContainer>
       <div>
-        {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-          <button key={page} onClick={() => handlePageChange(page)}>
-            {page}
-          </button>
-        ))}
-      </div>
+        <Pagination
+            count={totalPages}
+            page={page}
+            onChange={(event, value) => handlePageChange(value)}
+            variant="outlined"
+            shape="rounded"
+        />
+        </div>
     </div>
   );
 };
