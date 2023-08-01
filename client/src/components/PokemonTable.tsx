@@ -1,23 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button, Slider } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button, Slider, Container, Card } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
+import { Pokemon, Filters } from '../interfaces';
+import { getPokemons } from '../services/pokemon';
 
-
-interface Pokemon {
-  id: number;
-  name: string;
-  base_experience: number;
-  height: number;
-  weight: number;
-  image_url: string;
-}
-
-interface Filters {
-  base_experience?: number;
-  height?: number;
-  weight?: number;
-}
 
 const PokemonTable: React.FC = () => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
@@ -26,23 +12,21 @@ const PokemonTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sorting, setSorting] = useState<string>('');
   const [filters, setFilters] = useState<Filters>({});
-  const [totalPages, setTotalPages] = useState<number>(0); // Add the totalPages state
-
+  const [totalPages, setTotalPages] = useState<number>(0);
 
   useEffect(() => {
     const fetchPokemons = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:5000/pokemons`, {
-          params: {
-            page,
-            per_page: perPage,
-            sort_by: sorting,
-            name: searchTerm,
-            ...filters,
-          },
+        const response = await getPokemons({
+          page,
+          per_page: perPage,
+          sort_by: sorting,
+          name: searchTerm,
+          ...filters,
         });
-        setPokemons(response.data.items);
-        setTotalPages(response.data.total_pages); 
+    
+        setPokemons(response.items);
+        setTotalPages(response.total_pages);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -82,19 +66,26 @@ const PokemonTable: React.FC = () => {
   };
 
   return (
-    <div>
-      <TextField
-        label="Search by name"
-        value={searchTerm}
-        onChange={handleSearchChange}
-        variant="outlined"
-        margin="normal"
-      />
-      <Button variant="contained" color="primary" onClick={() => setFilters({})}>
-        Clear Filters
-      </Button>
+    <Container>
       <div>
-        <div>
+        <Card variant="outlined">
+          <div>
+            <TextField
+              label="Search by name"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              variant="outlined"
+              margin="normal"
+              
+            />
+            <Button variant="contained" color="primary" onClick={() => setFilters({})} >
+              Clear Filters
+            </Button>
+          </div>
+        </Card>
+      <div >
+        
+        <div >
           <span>Base Experience:</span>
           <Slider
             value={filters.base_experience || 0}
@@ -125,32 +116,34 @@ const PokemonTable: React.FC = () => {
           />
         </div>
       </div>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Base Experience</TableCell>
-              <TableCell>Height</TableCell>
-              <TableCell>Weight</TableCell>
-              <TableCell>Image</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {renderTableRows()}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <div>
-        <Pagination
-            count={totalPages}
-            page={page}
-            onChange={(event, value) => handlePageChange(value)}
-            variant="outlined"
-            shape="rounded"
-        />
-        </div>
-    </div>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Base Experience</TableCell>
+                <TableCell>Height</TableCell>
+                <TableCell>Weight</TableCell>
+                <TableCell>Image</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {renderTableRows()}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <div>
+          <Pagination
+              count={totalPages}
+              page={page}
+              onChange={(event, value) => handlePageChange(value)}
+              variant="outlined"
+              shape="rounded"
+          />
+          </div>
+      </div>
+    </Container>
+    
   );
 };
 
