@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button, Slider, Container, Card, Typography, Box, Link, InputLabel, Input } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Slider, Container, Card, Typography, Box, Link } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import { Pokemon, Filters } from '../interfaces';
 import { getPokemons } from '../services/pokemon';
@@ -39,8 +39,27 @@ const PokemonTable: React.FC = () => {
   };
 
   const handleSortChange = (property: string) => {
-    setSorting(property);
+    // If the same property is clicked again, reverse the sorting order
+    setSorting((prevSorting) => (prevSorting === property ? `-${property}` : property));
+
+    // Sort the pokemons array based on the selected property
+    const sortedPokemons = [...pokemons].sort((a, b) => {
+      const sortOrder = sorting === property ? 1 : -1;
+      if (property === 'name') {
+        return a.name.localeCompare(b.name) * sortOrder; // Sort by name (alphabetically)
+      } else if (property === 'base_experience') {
+        return (a.base_experience - b.base_experience) * sortOrder; // Sort by base_experience (numerically)
+      } else if (property === 'height') {
+        return (a.height - b.height) * sortOrder; // Sort by height (numerically)
+      } else if (property === 'weight') {
+        return (a.weight - b.weight) * sortOrder; // Sort by weight (numerically)
+      }
+      return 0;
+    });
+
+    setPokemons(sortedPokemons);
   };
+
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -67,12 +86,10 @@ const PokemonTable: React.FC = () => {
   return (
     <Container>
       <div>
-        <Card variant="outlined">
+        <Card sx={{ mt: 4 }} variant="outlined">
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Box sx={{ m: 2 }}>
-              <InputLabel htmlFor="search">
-                Search
-              </InputLabel>
+              
               <TextField
                 label="Search by name"
                 value={searchTerm}
@@ -81,13 +98,9 @@ const PokemonTable: React.FC = () => {
                 margin="normal"
                 fullWidth
               />
-            </Box>
-            <Box sx={{ m: 2 }}>
-              <Typography variant="body1">
-                <Link href="#" onClick={() => setFilters({})}>
-                  Clear Filters
-                </Link>
-              </Typography>
+              <Link href="#" onClick={() => setFilters({})}>
+                Clear Filters
+              </Link>
             </Box>
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -124,14 +137,14 @@ const PokemonTable: React.FC = () => {
           </Box>
         </Card>
       
-        <TableContainer component={Paper}>
+        <TableContainer sx={{ mt: 4 }} component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Base Experience</TableCell>
-                <TableCell>Height</TableCell>
-                <TableCell>Weight</TableCell>
+                <TableCell onClick={() => handleSortChange('name')}>Name</TableCell>
+                <TableCell onClick={() => handleSortChange('base_experience')}>Base Experience</TableCell>
+                <TableCell onClick={() => handleSortChange('height')}>Height</TableCell>
+                <TableCell onClick={() => handleSortChange('weight')}>Weight</TableCell>
                 <TableCell>Image</TableCell>
               </TableRow>
             </TableHead>
@@ -143,11 +156,12 @@ const PokemonTable: React.FC = () => {
 
         <div>
           <Pagination
-              count={totalPages}
-              page={page}
-              onChange={(event, value) => handlePageChange(value)}
-              variant="outlined"
-              shape="rounded"
+            sx={{ mt: 4 }}
+            count={totalPages}
+            page={page}
+            onChange={(event, value) => handlePageChange(value)}
+            variant="outlined"
+            shape="rounded"
           />
         </div>
       </div>
