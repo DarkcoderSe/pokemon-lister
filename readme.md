@@ -15,7 +15,7 @@ The frontend of the Pokemon Project presents the Pokemon data in a user-friendly
 To embark on your Pokemon adventure, follow these steps:
 
 1. 📥 Clone the repository to your local machine to get the project files.
-2. 🚀 Explore the backend by referring to the [backend README](backend/README.md).
+2. 🚀 Explore the backend by referring to the [backend README](backend/readme.md).
 3. 🌟 Experience the frontend by following the [frontend README](client/README.md) guidelines.
 
 Join us on this captivating journey into the enchanting world of Pokemon species, and get ready to catch 'em all! 🌌🔥🌊
