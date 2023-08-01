@@ -4,7 +4,7 @@ The Pokemon Project is an exciting application that provides comprehensive infor
 
 ## Backend
 
-The backend of the Pokemon Project serves as the backbone of the application, managing data and delivering it through API endpoints. To learn more about setting up and running the backend server, check out the [backend README](backend/README.md).
+The backend of the Pokemon Project serves as the backbone of the application, managing data and delivering it through API endpoints. To learn more about setting up and running the backend server, check out the [backend README](backend/readme.md).
 
 ## Frontend
 
