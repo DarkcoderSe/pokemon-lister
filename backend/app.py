@@ -1,49 +1,46 @@
+import os
 import csv
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from models import db, Pokemon
 
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pokemons.db'
-db = SQLAlchemy(app)
+db.init_app(app)
 
-class Pokemon(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    base_experience = db.Column(db.Integer, nullable=False)
-    height = db.Column(db.Float, nullable=False)
-    weight = db.Column(db.Float, nullable=False)
-    image_url = db.Column(db.String(200), nullable=False)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'base_experience': self.base_experience,
-            'height': self.height,
-            'weight': self.weight,
-            'image_url': self.image_url
-        }
     
 def load_data_from_csv():
+    csv_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pokemon_data.csv')
+
+    print("Loading data....")
     # Check if data already exists in the Pokemon table
     if Pokemon.query.first():
         print("Data is already loaded. Skipping data loading.")
         return
 
-    with open('pokemon_data.csv', newline='') as csvfile:
+    with open(csv_file_path, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            pokemon = Pokemon(name=row['Name'],
-                              base_experience=int(row['Base Experience']),
-                              height=float(row['Height']),
-                              weight=float(row['Weight']),
-                              image_url=row['Image URL'])
+            name = row['Name']
+            base_experience = int(row['Base Experience']) if row['Base Experience'] else 0
+            height = float(row['Height']) if row['Height'] else None
+            weight = float(row['Weight']) if row['Weight'] else None
+            image_url = row['Image URL']
+
+            pokemon = Pokemon(name=name,
+                              base_experience=base_experience,
+                              height=height,
+                              weight=weight,
+                              image_url=image_url)
             db.session.add(pokemon)
 
     db.session.commit()
     print("Data loaded successfully.")
 
+
+with app.app_context():
+    db.create_all()
+    load_data_from_csv()
     
 def paginate(endpoint_function):
     def wrapper(*args, **kwargs):
@@ -51,7 +48,7 @@ def paginate(endpoint_function):
         per_page = int(request.args.get('per_page', 10))
         query = endpoint_function(*args, **kwargs)
 
-        pagination = query.paginate(page, per_page, error_out=False)
+        pagination = query.paginate(page=page, per_page=per_page, error_out=False)
         result = {
             'page': page,
             'per_page': per_page,
@@ -89,6 +86,9 @@ def get_pokemons():
     return query  # Return the query object, not the result set
 
 
+
 if __name__ == '__main__':
-    load_data_from_csv()
+
     app.run(debug=True)
+
+
