@@ -35,6 +35,14 @@ To access the API, you can use tools like cURL or Postman, or simply use a web b
 
 Example: `GET` `http://127.0.0.1:5000/pokemons?page=1&per_page=15`
 
+### Tests
+
+The backend application includes test cases to ensure that the API endpoints are working correctly. To run the tests, follow these steps:
+
+1. Navigate to the `backend` directory in the terminal.
+2. Run the following command `pytest`
+3. OR you can run redirectly from parent folder `pytest backend/test_app.py`
+
 
 ### Note
 

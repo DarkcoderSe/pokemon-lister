@@ -8,6 +8,8 @@ flask = "*"
 sqlalchemy = "*"
 flask-sqlalchemy = "*"
 flask-cors = "*"
+pytest = "*"
+pytest-flask = "*"
 
 [dev-packages]
 
