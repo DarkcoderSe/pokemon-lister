@@ -78,14 +78,25 @@ def get_pokemons():
         else:
             query = query.order_by(getattr(Pokemon, sort_by))
 
-    # Filtering
     filters = {}
     for key in ['name', 'base_experience', 'height', 'weight']:
         value = request.args.get(key)
         if value:
-            filters[key] = value
+            if key == 'name':
+                query = query.filter(Pokemon.name.ilike(f'%{value}%'))
+            else:
+                operator = '__lt'  # Default operator for numeric conditions (less than)
+                try:
+                    # Check if the value can be converted to a number
+                    numeric_value = float(value)
+                    filters[key] = numeric_value
+                except ValueError:
+                    pass
 
-    query = query.filter_by(**filters)
+            if key in filters:
+                # Apply numeric condition (less than)
+                query = query.filter(getattr(Pokemon, key) < filters[key])
+                
     return query  # Return the query object, not the result set
 
 
